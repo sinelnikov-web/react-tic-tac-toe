@@ -3,6 +3,9 @@ import {analyzeMap} from "../common/game-utils";
 import ScoreBoard from "./ScoreBoard/ScoreBoard";
 
 const Game = () => {
+
+    const isMobile = /Mobile|webOS|BlackBerry|IEMobile|MeeGo|mini|Fennec|Windows Phone|Android|iP(ad|od|hone)/i.test(navigator.userAgent);
+
     let fieldsArr = {}
     let fieldId = 0
     for (let i = 0; i < 3; i++) {
@@ -17,18 +20,22 @@ const Game = () => {
         }
     }
 
+    // state for user queue
     let [user, setUser] = useState('cross')
 
+    // state for win / lose / draw control
     let [win, setWin] = useState('')
 
+    // state for game map
     let [fields, setFields] = useState({...fieldsArr})
 
+    // state for score
     let [score, setScore] = useState({
         cross: 0,
         circle: 0
     })
 
-
+    // analyze map when user click on field
     useEffect(() => {
         let checkWinOrDraw = analyzeMap(fields)
         setWin(checkWinOrDraw)
@@ -43,7 +50,7 @@ const Game = () => {
         }
     }, [fields])
 
-    const onClick = (e) => {
+    const onFieldClick = (e) => {
         const fieldId = e.target.id
         if (!fields[fieldId].isClicked) {
             setFields(prevFields => ({
@@ -87,23 +94,26 @@ const Game = () => {
             }))
         }
     }
+
     return (
         <>
             <ScoreBoard score={score}/>
             <div className="shadow tic-tac-toe">
                 {
                     Object.keys(fields).map(key => {
+                        const isUserClicked = fields[key].user ? fields[key].user === 'cross' ? 'bg-primary' : 'bg-danger' : ''
+                        const isUserWithPhone = isMobile ? !fields[key].isClicked ? user === 'cross' ? 'bg-primary' : 'bg-danger' : '' : ''
                         return (
                             <div
                                 key={key}
                                 id={key}
                                 className={
-                                    `shadow tic-tac-toe__field bg-gradient ${fields[key].user ? fields[key].user === 'cross' ? 'bg-primary' : 'bg-danger' : 'no'}`
+                                    `shadow tic-tac-toe__field bg-gradient ${isUserClicked} ${isUserWithPhone}`
                                 }
                                 data-column={fields[key].pos[0]}
                                 data-row={fields[key].pos[1]}
                                 data-user={fields[key].user}
-                                onClick={onClick}
+                                onClick={onFieldClick}
                                 onMouseEnter={(e) => handleMouseEnter(e)}
                                 onMouseLeave={(e) => handleMouseLeave(e)}
                             >
