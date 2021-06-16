@@ -70,3 +70,20 @@ export function analyzeMap(gameFields) {
     }
     return false
 }
+
+export function createMap() {
+    let fieldsArr = {}
+    let fieldId = 0
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            fieldsArr[fieldId] = {
+                isClicked: false,
+                pos: [j, i],
+                user: '',
+                isHover: false
+            }
+            fieldId++
+        }
+    }
+    return fieldsArr
+}

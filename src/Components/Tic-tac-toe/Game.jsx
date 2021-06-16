@@ -1,24 +1,14 @@
 import {useEffect, useState} from "react";
-import {analyzeMap} from "../common/game-utils";
+import {analyzeMap, createMap} from "../common/game-utils";
 import ScoreBoard from "./ScoreBoard/ScoreBoard";
+import GameField from "./GameField/GameField";
+import Modal from "./Modal/Modal";
 
 const Game = () => {
 
     const isMobile = /Mobile|webOS|BlackBerry|IEMobile|MeeGo|mini|Fennec|Windows Phone|Android|iP(ad|od|hone)/i.test(navigator.userAgent);
 
-    let fieldsArr = {}
-    let fieldId = 0
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            fieldsArr[fieldId] = {
-                isClicked: false,
-                pos: [j, i],
-                user: '',
-                isHover: false
-            }
-            fieldId++
-        }
-    }
+    let gameMap = createMap()
 
     // state for user queue
     let [user, setUser] = useState('cross')
@@ -27,7 +17,7 @@ const Game = () => {
     let [win, setWin] = useState('')
 
     // state for game map
-    let [fields, setFields] = useState({...fieldsArr})
+    let [fields, setFields] = useState({...gameMap})
 
     // state for score
     let [score, setScore] = useState({
@@ -66,7 +56,7 @@ const Game = () => {
     }
 
     const handleModalClose = () => {
-        setFields({...fieldsArr})
+        setFields({...gameMap})
         setWin('')
     }
 
@@ -104,38 +94,21 @@ const Game = () => {
                         const isUserClicked = fields[key].user ? fields[key].user === 'cross' ? 'bg-primary' : 'bg-danger' : ''
                         const isUserWithPhone = isMobile ? !fields[key].isClicked ? user === 'cross' ? 'bg-primary' : 'bg-danger' : '' : ''
                         return (
-                            <div
+                            <GameField
                                 key={key}
-                                id={key}
-                                className={
-                                    `shadow tic-tac-toe__field bg-gradient ${isUserClicked} ${isUserWithPhone}`
-                                }
-                                data-column={fields[key].pos[0]}
-                                data-row={fields[key].pos[1]}
-                                data-user={fields[key].user}
-                                onClick={onFieldClick}
-                                onMouseEnter={(e) => handleMouseEnter(e)}
-                                onMouseLeave={(e) => handleMouseLeave(e)}
-                            >
-                            <span id={key}
-                                  className={`shape ${fields[key].user} ${!fields[key].user && fields[key].isHover ? user : ''}`}
-                                  data-user={fields[key].user}
+                                fieldId={key}
+                                isUserClicked={isUserClicked}
+                                isUserWithPhone={isUserWithPhone}
+                                field={fields[key]}
+                                onFieldClick={onFieldClick}
+                                handleMouseEnter={handleMouseEnter}
+                                handleMouseLeave={handleMouseLeave}
+                                user={user}
                             />
-                            </div>
                         )
                     })
                 }
-                <div className={`message${win ? " open" : ""}`} id="win">
-                    <div className="shadow message__body">
-                        <h1 className={`message__title text-${win === 'cross' ? 'primary' : win === 'circle' ? 'danger' : 'default'}`}>
-                            {win === 'cross' ? "Победили крестики!!!" : win === 'circle' ? "Победили нолики" : "Ничья."}
-                        </h1>
-                        <button onClick={handleModalClose}
-                                className={`message__button btn btn-${win === 'cross' ? 'primary' : win === 'circle' ? 'danger' : 'dark'}`}>Start
-                            new game!
-                        </button>
-                    </div>
-                </div>
+                <Modal win={win} handleModalClose={handleModalClose}/>
             </div>
         </>
     )
