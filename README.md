@@ -1,3 +1,6 @@
+# GH-Pages:
+[Tic-Tac-Toe built with React](https://sinelnikov-web.github.io/react-tic-tac-toe/ "Tic-Tac-Toe built with React")
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
